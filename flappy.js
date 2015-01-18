@@ -1,8 +1,18 @@
 // the Game object used by the phaser.io library
 var stateActions = { preload: preload, create: create, update: update };
-var score = 0;
+var score = -1;
 var score_label;
 var main_player;
+var pipes;
+var pipe_interval = 3;
+var b;
+var c;
+var d;
+var f;
+var g;
+var player;
+
+
 // Phaser parameters:
 // - game width
 // - game height
@@ -33,29 +43,77 @@ function create() {
     game.stage.setBackgroundColor("#00FFFF");
     game.add.text(30,20,"Wanna play?",
         {font:"50px Calibri",fill:"#FF0000"});
-    game.add.text(30,120,"Get ready then...");
-    game.add.sprite(15,320,"player_pic_right_stand");
-    game.add.sprite(90,320,"player_pic_right_walk");
-    game.add.sprite(160,320,"player_pic_oh");
-    game.add.sprite(230,320,"player_pic_left_walk");
-    game.add.sprite(300,320,"player_pic_left_stand");
+    b =game.add.sprite(15,320,"player_pic_right_stand");
+    c =game.add.sprite(90,320,"player_pic_right_walk");
+    d =game.add.sprite(160,320,"player_pic_oh");
+    f =game.add.sprite(230,320,"player_pic_left_walk");
+    g =game.add.sprite(300,320,"player_pic_left_stand");
+    pipes = game.add.group();
 
-    for (var count = 0; count<4; count++){
-        game.add.sprite(500,40*count,"brick");
-        game.add.sprite(800,400-40*(count+1),"brick");
-    }
+    score_label = game.add.text(10,10,"0");
+
+    player = game.add.sprite(500,200,"player_pic_oh");
+
+
+
+
+    make_pipe();
+    game.time.events.loop(pipe_interval*Phaser.Timer.SECOND,make_pipe);
+
 
     game.input.onDown.add(clickHandler);
     game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(spaceHandler);
 
-    score_label = game.add.text(10,10,"0");
 
-    player = game.add.sprite(300,200,"player_pic_oh");
 
     game.input.keyboard.addKey(Phaser.Keyboard.RIGHT).onDown.add(moveRight);
     game.input.keyboard.addKey(Phaser.Keyboard.LEFT).onDown.add(moveLeft);
     game.input.keyboard.addKey(Phaser.Keyboard.UP).onDown.add(moveUp);
     game.input.keyboard.addKey(Phaser.Keyboard.DOWN).onDown.add(moveDown);
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.arcade.enable(player);
+   // game.physics.arcade.enable(a);
+    game.physics.arcade.enable(b);
+    game.physics.arcade.enable(c);
+    game.physics.arcade.enable(d);
+    //game.physics.arcade.enable(e);
+    game.physics.arcade.enable(f);
+    game.physics.arcade.enable(g);
+
+
+    //player.body.velocity.x = 100;
+    player.body.gravity.y = 200;
+    //a.body.velocity.x=-100;
+    b.body.velocity.x=-100;
+    c.body.velocity.x=-100;
+    d.body.velocity.x=-100;
+    //e.body.velocity.x=-100;
+    f.body.velocity.x=-100;
+    g.body.velocity.x=-100;
+
+}
+
+function make_pipe(){
+    var gap_start = game.rnd.integerInRange(2,7)
+    for (var count = 0; count<10; count++){
+        if(count != gap_start && count != gap_start + 1 && count != gap_start + 2){
+            //game.add.sprite(500,40*count,"brick");
+            add_pipes(900,count*40);
+
+            //game.add.sprite(800,400-40*(count+1),"brick");
+            //game.add.sprite(550 + 40*count,250,"brick" );
+            //game.add.sprite(900,40*count,"brick");
+        }
+
+    }
+    changeScore();
+}
+
+function add_pipes (x,y){
+    var pipe = pipes.create(x,y,"brick");
+    game.physics.arcade.enable(pipe);
+    pipe.body.velocity.x = -100;
 }
 
 function clickHandler(event){
@@ -66,7 +124,12 @@ function clickHandler(event){
 
 function spaceHandler() {
     game.sound.play("mystery");
-    changeScore();
+    //changeScore();
+    player_jump();
+}
+
+function player_jump(){
+    player.body.velocity.y= -100;
 }
 
 function changeScore() {
@@ -89,9 +152,14 @@ function moveUp() {
 function moveDown() {
     player.y = player.y+10;
 }
+
+function game_over() {
+    game.destroy();
+    alert("GAMEOVER! You got " + score + "points");
+}
 /*
  * This function updates the scene. It is called for every new frame.
  */
 function update() {
-    
+    game.physics.arcade.overlap(player,pipes,game_over);
 }
