@@ -22,6 +22,7 @@ function preload() {
     game.load.image("player_pic_right_stand","assets/stand_right.png");
     game.load.image("player_pic_right_walk","assets/walk_right.png");
     game.load.audio("mystery","assets/lift.wav");
+    game.load.image("brick","assets/brick1.jpg");
 }
 
 /*
@@ -38,6 +39,11 @@ function create() {
     game.add.sprite(160,320,"player_pic_oh");
     game.add.sprite(230,320,"player_pic_left_walk");
     game.add.sprite(300,320,"player_pic_left_stand");
+
+    for (var count = 0; count<4; count++){
+        game.add.sprite(500,40*count,"brick");
+        game.add.sprite(800,400-40*(count+1),"brick");
+    }
 
     game.input.onDown.add(clickHandler);
     game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR).onDown.add(spaceHandler);
