@@ -5,7 +5,6 @@ var score_label;
 var main_player;
 var pipes;
 var pipe_interval = 3;
-var b;
 var c;
 var d;
 var f;
@@ -43,7 +42,7 @@ function create() {
     game.stage.setBackgroundColor("#00FFFF");
     game.add.text(30,20,"Wanna play?",
         {font:"50px Calibri",fill:"#FF0000"});
-    b =game.add.sprite(15,320,"player_pic_right_stand");
+    var b =game.add.sprite(15,320,"player_pic_right_stand");
     c =game.add.sprite(90,320,"player_pic_right_walk");
     d =game.add.sprite(160,320,"player_pic_oh");
     f =game.add.sprite(230,320,"player_pic_left_walk");
